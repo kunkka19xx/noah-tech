@@ -23,7 +23,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query("SELECT NEW com.story.noah.dto.MiniPostDto(" +
             " p.id as id, p.title as title, p.user.id as userId," +
-            " u.userName as author, p.createdAt as createdAt, " +
+            " u.username as author, p.createdAt as createdAt, " +
             " left(cast(string_agg(pp.content, ' ') as java.lang.String),60) as content, " +
             " (SELECT pop.image FROM PartOfPost pop" +
             " WHERE pop.post.id = p.id" +
@@ -34,7 +34,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             " JOIN PartOfPost pp ON p.id = pp.post.id" +
             " WHERE (:#{#filter.userId} IS NULL OR u.id = :#{#filter.userId})" +
             " AND (:#{#filter.title} IS NULL OR :#{#filter.title} = '' OR p.title = :#{#filter.title})" +
-            " GROUP BY p.id, p.title, p.user.id, u.userName, p.createdAt")
+            " GROUP BY p.id, p.title, p.user.id, u.username, p.createdAt")
     Page<MiniPostDto> getMiniPost(Pageable pageable,@Param("filter") Filter filter);
 
 }

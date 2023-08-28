@@ -20,7 +20,7 @@ public interface CommentProjection {
 
     public interface UserProjection{
         Integer getId();
-        String getUserName();
+        String getUsername();
     }
 
     LocalDateTime getCreatedAt();
