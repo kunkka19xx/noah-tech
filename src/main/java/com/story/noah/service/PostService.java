@@ -1,6 +1,7 @@
 package com.story.noah.service;
 
 import com.story.noah.dto.MiniPostDto;
+import com.story.noah.dto.PostCreationDto;
 import com.story.noah.dto.PostWithUserIdProjection;
 import com.story.noah.model.Post;
 import com.story.noah.payload.Filter;
@@ -14,4 +15,6 @@ public interface PostService {
     Page<PostWithUserIdProjection> getAll(Pageable pageable);
 
     Page<MiniPostDto> getMiniPost(Pageable pageable, Filter filter);
+
+    Post makePost(PostCreationDto post);
 }

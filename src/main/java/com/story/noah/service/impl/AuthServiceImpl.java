@@ -2,6 +2,7 @@ package com.story.noah.service.impl;
 
 import com.story.noah.config.JwtUtils;
 import com.story.noah.config.UserSecurity;
+import com.story.noah.exception.AlreadyExistException;
 import com.story.noah.model.User;
 import com.story.noah.payload.JwtAuthResponse;
 import com.story.noah.payload.SignInInput;
@@ -9,6 +10,8 @@ import com.story.noah.repository.jpa.UserRepository;
 import com.story.noah.service.AuthService;
 import com.story.noah.service.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@PropertySource("classpath:message.properties")
 @Service
 public class AuthServiceImpl implements AuthService {
+
+    @Value("${mess.err.username.exist}")
+    String usernameExistMsg;
+
+    @Value("${mess.err.email.exist}")
+    String emailExistMsg;
+
     @Autowired
     private UserDetailService userDetailService;
 
@@ -48,6 +59,15 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public JwtAuthResponse signUp(User input) {
+        // check user is exist or not?
+        if(userRepository.findByEmail(input.getUsername()).isPresent()){
+            // exception user with email is exist
+            throw new AlreadyExistException(emailExistMsg);
+        }
+        if(userRepository.findByUsername(input.getUsername()).isPresent()){
+            // exception username is existed, please choose another name
+            throw new AlreadyExistException(usernameExistMsg);
+        }
         input.setUpdatedAt(LocalDateTime.now());
         input.setCreatedAt(LocalDateTime.now());
         input.setPassword(passwordEncoder.encode(input.getPassword()));

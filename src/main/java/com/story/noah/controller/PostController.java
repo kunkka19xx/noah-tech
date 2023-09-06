@@ -2,6 +2,7 @@ package com.story.noah.controller;
 
 import com.story.noah.aspect.Paging;
 import com.story.noah.dto.MiniPostDto;
+import com.story.noah.dto.PostCreationDto;
 import com.story.noah.dto.PostDto;
 import com.story.noah.dto.PostWithUserIdProjection;
 import com.story.noah.model.Post;
@@ -34,7 +35,7 @@ public class PostController {
     @GetMapping("/all")
     public ResponseDto<Page<PostWithUserIdProjection>> getAll(@RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "10") int size) {
-        PageRequest pageable = PageRequest.of(page,size);
+        PageRequest pageable = PageRequest.of(page, size);
         ResponseDto<Page<PostWithUserIdProjection>> response = new ResponseDto<>();
         Page<PostWithUserIdProjection> data = postService.getAll(pageable);
         response.setData(data);
@@ -45,8 +46,8 @@ public class PostController {
 
     @GetMapping("/mini")
     public ResponseDto<Page<MiniPostDto>> getMiniPost(@RequestParam(defaultValue = "0") int page,
-                                                 @RequestParam(defaultValue = "10") int size, Integer userId, String title) {
-        PageRequest pageable = PageRequest.of(page,size);
+                                                      @RequestParam(defaultValue = "10") int size, Integer userId, String title) {
+        PageRequest pageable = PageRequest.of(page, size);
         ResponseDto<Page<MiniPostDto>> response = new ResponseDto<>();
         Filter filter = new Filter(userId, title);
         Page<MiniPostDto> data = postService.getMiniPost(pageable, filter);
@@ -54,6 +55,15 @@ public class PostController {
         response.setMessage("DONE");
         response.setHttpStatusCode(HttpStatus.FOUND.value());
         return response;
+    }
+
+    @PostMapping("/make-post")
+    public ResponseDto<Post> makePostByDto(@ModelAttribute PostCreationDto post) {
+        Post data = postService.makePost(post);
+        ResponseDto<Post> result = new ResponseDto<Post>();
+        result.setData(data);
+        result.setHttpStatusCode(data == null ? HttpStatus.BAD_REQUEST.value() : HttpStatus.CREATED.value());
+        return result;
     }
 }
 
