@@ -34,7 +34,7 @@ public class NoahSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/post/*")
+                        .requestMatchers("/*/public/**")
                         .permitAll()
                         .requestMatchers("/auth/*")
                         .permitAll()

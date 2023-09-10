@@ -37,7 +37,7 @@ public class CommentController {
 
     }
 
-    @GetMapping("{postId}")
+    @GetMapping("/public/{postId}")
     Page<CommentProjection> getCommentByPost(@PathVariable(value = "postId") int postId, int page, int size){
         PageRequest pageable = PageRequest.of(page,size);
         return commentService.getCommentByPost(postId, pageable);

@@ -1,7 +1,7 @@
 package com.story.noah.repository.jpa;
 
 import com.story.noah.dto.MiniPostDto;
-import com.story.noah.dto.PostWithUserIdProjection;
+import com.story.noah.dto.PostProjection;
 import com.story.noah.model.Post;
 import com.story.noah.payload.Filter;
 import org.springframework.data.domain.Page;
@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
+import java.util.Optional;
 
 
 @Repository
@@ -19,7 +19,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     //    List<PostDto> findAllProjectedBy();
 //    @EntityGraph(attributePaths = "content")
-    Page<PostWithUserIdProjection> findAllProjectedBy(Pageable pageable);
+    Page<PostProjection> findAllProjectedBy(Pageable pageable);
+
+    Optional<PostProjection> findPostProjectionById(Integer id);
 
     @Query("SELECT NEW com.story.noah.dto.MiniPostDto(" +
             " p.id as id, p.title as title, p.user.id as userId," +

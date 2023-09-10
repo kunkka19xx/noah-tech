@@ -4,7 +4,7 @@ import com.story.noah.common.DateTimeUtil;
 import com.story.noah.dto.MiniPostDto;
 import com.story.noah.dto.PartCreationDto;
 import com.story.noah.dto.PostCreationDto;
-import com.story.noah.dto.PostWithUserIdProjection;
+import com.story.noah.dto.PostProjection;
 import com.story.noah.model.PartOfPost;
 import com.story.noah.model.Post;
 import com.story.noah.model.User;
@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @PropertySource("classpath:config.properties")
@@ -54,8 +55,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<PostWithUserIdProjection> getAll(Pageable pageable) {
+    public Page<PostProjection> getAll(Pageable pageable) {
         return postRepository.findAllProjectedBy(pageable);
+    }
+
+    @Override
+    public Optional<PostProjection> findPostProjectionById(Integer id) {
+        return postRepository.findPostProjectionById(id);
     }
 
     @Override
@@ -74,6 +80,7 @@ public class PostServiceImpl implements PostService {
         user.setId(post.getUserId());
         postEntity.setUser(user);
         short i = 0;
+        LocalDateTime now = LocalDateTime.now();
         for (PartCreationDto part : parts
         ) {
             PartOfPost partOfPost = new PartOfPost();
@@ -86,26 +93,27 @@ public class PostServiceImpl implements PostService {
                 try (InputStream is = file.getInputStream()) {
                     String fileName = file.getOriginalFilename();
                     String newFileName = fileName.replace(".", DateTimeUtil.getNowForFileName().concat("."));
-                    System.out.println(newFileName);
                     Path target = Paths.get(destination).resolve(Paths.get(newFileName)).normalize();
                     System.out.println(target.toString());
                     Files.copy(is, target);
-                    String time = LocalDateTime.now().toString();
                     part.setImage(target.toString());
                     partOfPost.setImage(target.toString());
-
                     partOfPost.setPost(postEntity);
+                    partOfPost.setCreatedAt(now);
+                    partOfPost.setUpdatedAt(now);
                     partEntities.add(partOfPost);
                 } catch (IOException io) {
                     io.printStackTrace();
                     return null;
                 }
             }
-
         }
         postEntity.setContent(partEntities);
+        postEntity.setCreatedAt(now);
+        postEntity.setUpdatedAt(now);
         postRepository.save(postEntity);
         partRepository.saveAll(partEntities);
         return postEntity;
     }
+
 }
