@@ -38,6 +38,7 @@ public class PostController {
         return response;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/public/detail/{id}")
     public ResponseDto<PostProjection> findById(@PathVariable(value = "id") int id) {
         System.out.println("start");

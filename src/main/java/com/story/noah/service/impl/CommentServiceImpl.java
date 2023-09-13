@@ -3,6 +3,7 @@ package com.story.noah.service.impl;
 import com.story.noah.dto.CommentProjection;
 import com.story.noah.model.Comment;
 import com.story.noah.repository.jpa.CommentRepository;
+import com.story.noah.service.AuthService;
 import com.story.noah.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,12 +22,16 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private AuthService authService;
+
     @Transactional
     @Override
     public boolean postComment(Comment comment) {
         try {
             comment.setCreatedAt(LocalDateTime.now());
             comment.setUpdatedAt(LocalDateTime.now());
+            comment.setUser(authService.getCurrentUser());
             commentRepository.save(comment);
         } catch (DataIntegrityViolationException e) {
             return false;

@@ -12,8 +12,11 @@ import com.story.noah.service.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,11 +63,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public JwtAuthResponse signUp(User input) {
         // check user is exist or not?
-        if(userRepository.findByEmail(input.getUsername()).isPresent()){
+        if (userRepository.findByEmail(input.getUsername()).isPresent()) {
             // exception user with email is exist
             throw new AlreadyExistException(emailExistMsg);
         }
-        if(userRepository.findByUsername(input.getUsername()).isPresent()){
+        if (userRepository.findByUsername(input.getUsername()).isPresent()) {
             // exception username is existed, please choose another name
             throw new AlreadyExistException(usernameExistMsg);
         }
@@ -76,5 +79,16 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("Can not create user"));
         var jwt = jwtUtils.generateToken(userDetail);
         return new JwtAuthResponse(jwt);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth instanceof AnonymousAuthenticationToken)) {
+            String currentUserName = auth.getName();
+            return userRepository.findByEmail(currentUserName).get();
+        } else {
+            throw new RuntimeException();
+        }
     }
 }

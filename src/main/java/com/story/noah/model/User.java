@@ -1,5 +1,7 @@
 package com.story.noah.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +22,7 @@ public class User implements Serializable {
     private String email;
     private String phone;
     private Date birthdate;
+    @JsonIgnore
     private String password;
     private String token;
     private String address;

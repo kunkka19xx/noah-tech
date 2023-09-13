@@ -8,4 +8,6 @@ public interface AuthService {
     JwtAuthResponse signIn(SignInInput input);
 
     JwtAuthResponse signUp(User input);
+
+    User getCurrentUser();
 }
