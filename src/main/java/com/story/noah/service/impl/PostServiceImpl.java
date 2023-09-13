@@ -1,6 +1,8 @@
 package com.story.noah.service.impl;
 
 import com.story.noah.common.DateTimeUtil;
+import com.story.noah.constants.InfoConstant;
+import com.story.noah.constants.PatternConstant;
 import com.story.noah.dto.MiniPostDto;
 import com.story.noah.dto.PartCreationDto;
 import com.story.noah.dto.PostCreationDto;
@@ -81,20 +83,22 @@ public class PostServiceImpl implements PostService {
         postEntity.setUser(user);
         short i = 0;
         LocalDateTime now = LocalDateTime.now();
+        int totalWords = 0;
         for (PartCreationDto part : parts
         ) {
             PartOfPost partOfPost = new PartOfPost();
             BeanUtils.copyProperties(part, partOfPost);
             partOfPost.setIndex(i++);
+            totalWords += partOfPost.getContent().split(PatternConstant.SPACE).length;
             MultipartFile file = part.getFile();
-            if (file.isEmpty() || file == null) {
+            if (file.isEmpty()) {
                 partEntities.add(partOfPost);
             } else {
                 try (InputStream is = file.getInputStream()) {
                     String fileName = file.getOriginalFilename();
-                    String newFileName = fileName.replace(".", DateTimeUtil.getNowForFileName().concat("."));
+                    String newFileName = fileName.replace(PatternConstant.DOT,
+                            DateTimeUtil.getNowForFileName().concat(PatternConstant.DOT));
                     Path target = Paths.get(destination).resolve(Paths.get(newFileName)).normalize();
-                    System.out.println(target.toString());
                     Files.copy(is, target);
                     part.setImage(target.toString());
                     partOfPost.setImage(target.toString());
@@ -109,6 +113,7 @@ public class PostServiceImpl implements PostService {
             }
         }
         postEntity.setContent(partEntities);
+        postEntity.setLength((totalWords / InfoConstant.AVERAGE_READING_SPEED_MIN) + 1);
         postEntity.setCreatedAt(now);
         postEntity.setUpdatedAt(now);
         postRepository.save(postEntity);

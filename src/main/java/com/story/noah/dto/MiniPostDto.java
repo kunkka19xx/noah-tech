@@ -20,4 +20,7 @@ public class MiniPostDto {
     private LocalDateTime createdAt;
     private String content;
     private String image;
+    private String[] tags;
+    private String[] categories;
+
 }

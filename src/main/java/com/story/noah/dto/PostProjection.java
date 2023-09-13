@@ -22,9 +22,14 @@ public interface PostProjection {
     @Value("#{target.user.id}")
     Integer getUserId();
 
+    @Value("#{target.user.username}")
+    String getAuthor();
+
     LocalDateTime getCreatedAt();
 
     LocalDateTime getUpdatedAt();
+
+    Integer getLength();
 
 //    List<PartOfPost> getContent();
 

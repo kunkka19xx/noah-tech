@@ -42,4 +42,7 @@ public class Post {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @Column(name = "length")
+    private Integer length;
+
 }
