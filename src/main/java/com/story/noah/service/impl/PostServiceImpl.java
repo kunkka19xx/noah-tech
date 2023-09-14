@@ -72,6 +72,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<MiniPostDto> getLatestPost(Filter filter) {
+        return postRepository.getLatestPost(filter);
+    }
+
+    @Override
     @Transactional
     public Post makePost(PostCreationDto post) {
         List<PartCreationDto> parts = post.getContent();

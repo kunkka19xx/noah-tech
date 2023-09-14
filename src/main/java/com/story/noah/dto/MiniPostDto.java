@@ -18,7 +18,7 @@ public class MiniPostDto {
     private Integer userId;
     private String author;
     private LocalDateTime createdAt;
-    private String content;
+    private String miniContent;
     private String image;
     private String[] tags;
     private String[] categories;

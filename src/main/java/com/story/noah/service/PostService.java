@@ -8,6 +8,7 @@ import com.story.noah.payload.Filter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -21,4 +22,6 @@ public interface PostService {
     Post makePost(PostCreationDto post);
 
     Optional<PostProjection> findPostProjectionById(Integer id);
+
+    List<MiniPostDto> getLatestPost(Filter filter);
 }

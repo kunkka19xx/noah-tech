@@ -13,10 +13,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/post")
+@CrossOrigin(origins = "http://localhost:3000")
 public class PostController {
     @Autowired
     private PostService postService;
@@ -38,7 +40,6 @@ public class PostController {
         return response;
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/public/detail/{id}")
     public ResponseDto<PostProjection> findById(@PathVariable(value = "id") int id) {
         System.out.println("start");
@@ -62,6 +63,17 @@ public class PostController {
         ResponseDto<Page<MiniPostDto>> response = new ResponseDto<>();
         Filter filter = new Filter(userId, title);
         Page<MiniPostDto> data = postService.getMiniPost(pageable, filter);
+        response.setData(data);
+        response.setMessage("DONE");
+        response.setHttpStatusCode(HttpStatus.FOUND.value());
+        return response;
+    }
+
+    @GetMapping("/public/latest")
+    public ResponseDto<List<MiniPostDto>> getMiniPost(Integer userId, String title) {
+        ResponseDto<List<MiniPostDto>> response = new ResponseDto<>();
+        Filter filter = new Filter(userId, title);
+        List<MiniPostDto> data = postService.getLatestPost( filter);
         response.setData(data);
         response.setMessage("DONE");
         response.setHttpStatusCode(HttpStatus.FOUND.value());
