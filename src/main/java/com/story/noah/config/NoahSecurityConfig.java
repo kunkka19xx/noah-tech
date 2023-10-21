@@ -43,6 +43,8 @@ public class NoahSecurityConfig {
                         .permitAll()
                         .requestMatchers("/auth/*")
                         .permitAll()
+                        .requestMatchers("/post/*")
+                        .permitAll()
                         .requestMatchers("/swagger-ui/**",
                                 "/swagger-resources/*",
                                 "/v3/api-docs/**")

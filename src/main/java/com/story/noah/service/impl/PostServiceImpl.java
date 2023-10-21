@@ -13,7 +13,9 @@ import com.story.noah.model.User;
 import com.story.noah.payload.Filter;
 import com.story.noah.repository.jpa.PartOfPostRepository;
 import com.story.noah.repository.jpa.PostRepository;
+import com.story.noah.service.AuthService;
 import com.story.noah.service.PostService;
+import com.story.noah.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +48,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PartOfPostRepository partRepository;
+
+    @Autowired
+    private AuthService authService;
 
     @Override
     public boolean createPost(Post post) {
@@ -83,9 +88,7 @@ public class PostServiceImpl implements PostService {
         Post postEntity = new Post();
         List<PartOfPost> partEntities = new ArrayList<>();
         BeanUtils.copyProperties(post, postEntity);
-        User user = new User();
-        user.setId(post.getUserId());
-        postEntity.setUser(user);
+        postEntity.setUser(authService.getCurrentUser());
         short i = 0;
         LocalDateTime now = LocalDateTime.now();
         int totalWords = 0;
@@ -94,6 +97,7 @@ public class PostServiceImpl implements PostService {
             PartOfPost partOfPost = new PartOfPost();
             BeanUtils.copyProperties(part, partOfPost);
             partOfPost.setIndex(i++);
+            // need check null for part content
             totalWords += partOfPost.getContent().split(PatternConstant.SPACE).length;
             MultipartFile file = part.getFile();
             if (file.isEmpty()) {

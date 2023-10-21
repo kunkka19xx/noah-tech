@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/post")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 public class PostController {
     @Autowired
     private PostService postService;
@@ -81,7 +81,7 @@ public class PostController {
     }
 
     @PostMapping("/make-post")
-    public ResponseDto<Post> makePostByDto(@ModelAttribute PostCreationDto post) {
+    public ResponseDto<Post> makePostByDto( @ModelAttribute PostCreationDto post) {
         Post data = postService.makePost(post);
         ResponseDto<Post> result = new ResponseDto<Post>();
         result.setData(data);
