@@ -25,9 +25,11 @@ public class Post {
     @Type(StringArrayType.class)
     @Column(name = "categories", columnDefinition = "character varying[]")
     private String[] categories;
+
     @Type(StringArrayType.class)
     @Column(name = "tags", columnDefinition = "character varying[]")
     private String[] tags;
+
     private int viewNumber;
 
     @JsonBackReference

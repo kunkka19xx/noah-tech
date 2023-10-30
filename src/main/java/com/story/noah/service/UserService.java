@@ -8,4 +8,5 @@ public interface UserService {
     boolean createUser(User user);
 
     Page<User> getAllUser(Pageable pageable);
+
 }

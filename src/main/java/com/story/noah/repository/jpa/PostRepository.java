@@ -38,6 +38,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             " JOIN PartOfPost pp ON p.id = pp.post.id" +
             " WHERE (:#{#filter.userId} IS NULL OR u.id = :#{#filter.userId})" +
             " AND (:#{#filter.title} IS NULL OR :#{#filter.title} = '' OR p.title = :#{#filter.title})" +
+            " AND (:#{#filter.tag} IS NULL OR :#{#filter.tag} = '' OR array_contains(p.tags, :#{#filter.tag}) = true )" +
+            " AND (:#{#filter.category} IS NULL OR :#{#filter.category} = '' OR array_contains(p.tags, :#{#filter.category}) = true )" +
             " GROUP BY p.id, p.title, p.user.id, u.username, p.createdAt" +
             " ORDER BY p.createdAt DESC")
     Page<MiniPostDto> getMiniPost(Pageable pageable, @Param("filter") Filter filter);

@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.beans.BeanProperty;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +43,6 @@ public class PostController {
 
     @GetMapping("/public/detail/{id}")
     public ResponseDto<PostProjection> findById(@PathVariable(value = "id") int id) {
-        System.out.println("start");
         ResponseDto<PostProjection> response = new ResponseDto<>();
         Optional<PostProjection> post = postService.findPostProjectionById(id);
         if (post.isPresent()) {
@@ -61,7 +61,7 @@ public class PostController {
                                                       @RequestParam(defaultValue = "10") int size, Integer userId, String title) {
         PageRequest pageable = PageRequest.of(page, size);
         ResponseDto<Page<MiniPostDto>> response = new ResponseDto<>();
-        Filter filter = new Filter(userId, title);
+        Filter filter = new Filter(userId, title, null, null);
         Page<MiniPostDto> data = postService.getMiniPost(pageable, filter);
         response.setData(data);
         response.setMessage("DONE");
@@ -72,8 +72,8 @@ public class PostController {
     @GetMapping("/public/latest")
     public ResponseDto<List<MiniPostDto>> getMiniPost(Integer userId, String title) {
         ResponseDto<List<MiniPostDto>> response = new ResponseDto<>();
-        Filter filter = new Filter(userId, title);
-        List<MiniPostDto> data = postService.getLatestPost( filter);
+        Filter filter = new Filter(userId, title, null, null);
+        List<MiniPostDto> data = postService.getLatestPost(filter);
         response.setData(data);
         response.setMessage("DONE");
         response.setHttpStatusCode(HttpStatus.FOUND.value());
@@ -81,12 +81,30 @@ public class PostController {
     }
 
     @PostMapping("/make-post")
-    public ResponseDto<Post> makePostByDto( @ModelAttribute PostCreationDto post) {
+    public ResponseDto<Post> makePostByDto(@ModelAttribute PostCreationDto post) {
         Post data = postService.makePost(post);
         ResponseDto<Post> result = new ResponseDto<Post>();
         result.setData(data);
         result.setHttpStatusCode(data == null ? HttpStatus.BAD_REQUEST.value() : HttpStatus.CREATED.value());
         return result;
     }
+
+    /**
+     * TODO
+     */
+    @GetMapping("/public/find")
+    public ResponseDto<Page<MiniPostDto>> findPostByConditions(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "10") int size, Integer userId,
+                                                               String title, String tag, String category) {
+        PageRequest pageable = PageRequest.of(page, size);
+        ResponseDto<Page<MiniPostDto>> response = new ResponseDto<>();
+        Filter filter = new Filter(userId, title, tag, category);
+        Page<MiniPostDto> data = postService.getMiniPost(pageable, filter);
+        response.setData(data);
+        response.setMessage("DONE");
+        response.setHttpStatusCode(HttpStatus.FOUND.value());
+        return response;
+    }
+
 }
 
