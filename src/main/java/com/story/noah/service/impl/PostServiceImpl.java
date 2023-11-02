@@ -82,6 +82,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<MiniPostDto> getTopPost(Filter filter) {
+        return postRepository.getTopPost(filter);
+    }
+
+    @Override
     @Transactional
     public Post makePost(PostCreationDto post) {
         List<PartCreationDto> parts = post.getContent();
@@ -100,7 +105,10 @@ public class PostServiceImpl implements PostService {
             // need check null for part content
             totalWords += partOfPost.getContent().split(PatternConstant.SPACE).length;
             MultipartFile file = part.getFile();
-            if (file.isEmpty()) {
+            if (file == null) {
+                partOfPost.setPost(postEntity);
+                partOfPost.setCreatedAt(now);
+                partOfPost.setUpdatedAt(now);
                 partEntities.add(partOfPost);
             } else {
                 try (InputStream is = file.getInputStream()) {

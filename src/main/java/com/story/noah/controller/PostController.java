@@ -70,7 +70,18 @@ public class PostController {
     }
 
     @GetMapping("/public/latest")
-    public ResponseDto<List<MiniPostDto>> getMiniPost(Integer userId, String title) {
+    public ResponseDto<List<MiniPostDto>> getLatestPost(Integer userId, String title) {
+        ResponseDto<List<MiniPostDto>> response = new ResponseDto<>();
+        Filter filter = new Filter(userId, title, null, null);
+        List<MiniPostDto> data = postService.getLatestPost(filter);
+        response.setData(data);
+        response.setMessage("DONE");
+        response.setHttpStatusCode(HttpStatus.FOUND.value());
+        return response;
+    }
+
+    @GetMapping("/public/top")
+    public ResponseDto<List<MiniPostDto>> getTopPost(Integer userId, String title) {
         ResponseDto<List<MiniPostDto>> response = new ResponseDto<>();
         Filter filter = new Filter(userId, title, null, null);
         List<MiniPostDto> data = postService.getLatestPost(filter);
@@ -86,6 +97,9 @@ public class PostController {
         ResponseDto<Post> result = new ResponseDto<Post>();
         result.setData(data);
         result.setHttpStatusCode(data == null ? HttpStatus.BAD_REQUEST.value() : HttpStatus.CREATED.value());
+        if(data != null){
+            System.out.println(data.getId());
+        }
         return result;
     }
 

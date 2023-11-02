@@ -24,4 +24,6 @@ public interface PostService {
     Optional<PostProjection> findPostProjectionById(Integer id);
 
     List<MiniPostDto> getLatestPost(Filter filter);
+
+    List<MiniPostDto> getTopPost(Filter filter);
 }
