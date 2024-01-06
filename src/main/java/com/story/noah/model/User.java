@@ -22,7 +22,6 @@ public class User implements Serializable {
     private String email;
     private String phone;
     private Date birthdate;
-    @JsonIgnore
     private String password;
     private String token;
     private String address;
