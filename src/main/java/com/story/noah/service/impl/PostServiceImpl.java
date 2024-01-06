@@ -52,6 +52,9 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private DriveService driveService;
+
     @Override
     public boolean createPost(Post post) {
         List<PartOfPost> part = post.getContent();
@@ -111,20 +114,24 @@ public class PostServiceImpl implements PostService {
                 partOfPost.setUpdatedAt(now);
                 partEntities.add(partOfPost);
             } else {
-                try (InputStream is = file.getInputStream()) {
-                    String fileName = file.getOriginalFilename();
-                    String newFileName = fileName.replace(PatternConstant.DOT,
-                            DateTimeUtil.getNowForFileName().concat(PatternConstant.DOT));
-                    Path target = Paths.get(destination).resolve(Paths.get(newFileName)).normalize();
-                    Files.copy(is, target);
-                    part.setImage(target.toString());
-                    partOfPost.setImage(target.toString());
+//                try (InputStream is = file.getInputStream()) {
+//                    String fileName = file.getOriginalFilename();
+//                    String newFileName = fileName.replace(PatternConstant.DOT,
+//                            DateTimeUtil.getNowForFileName().concat(PatternConstant.DOT));
+//                    Path target = Paths.get(destination).resolve(Paths.get(newFileName)).normalize();
+//                    Files.copy(is, target);
+                try {
+                    String imgPath = driveService.uploadFile(file);
+//                    part.setImage(target.toString());
+//                    partOfPost.setImage(target.toString());
+                    part.setImage(imgPath);
+                    partOfPost.setImage(imgPath);
                     partOfPost.setPost(postEntity);
                     partOfPost.setCreatedAt(now);
                     partOfPost.setUpdatedAt(now);
                     partEntities.add(partOfPost);
-                } catch (IOException io) {
-                    io.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                     return null;
                 }
             }
